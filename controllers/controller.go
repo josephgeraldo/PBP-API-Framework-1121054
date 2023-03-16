@@ -2,23 +2,40 @@ package controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
 
 func GetAllUsers(c echo.Context) error {
 	db := c.Get("db").(*sql.DB)
+	defer db.Close()
 
 	query := "SELECT id, name, age, address, country FROM users"
+
+	name := c.QueryParam("name")
+	ages, ok := c.QueryParams()["age"]
+	if name != "" {
+  		fmt.Println(name)
+  		query += " WHERE name='" + name + "'"
+	}
+	if ok && len(ages) > 0 && ages[0] != "" {
+  		if name != "" {
+    		query += " AND"
+  		} else {
+    		query += " WHERE"
+  		}
+ 		query += " age='" + ages[0] + "'"
+	}
 
 	rows, err := db.Query(query)
 	if err != nil {
 		log.Println("Error:", err)
 		return c.JSON(http.StatusBadRequest, map[string]string{"Message": "Something Wrong",})
 	}
-	defer rows.Close()
 
 	var users []User
 	for rows.Next() {
@@ -44,5 +61,34 @@ func GetAllUsers(c echo.Context) error {
 		response.Message = "Error"
 		c.Response().Header().Set("Content-Type", "application/json")
 		return c.JSON(http.StatusBadRequest, response)
+	}
+}
+
+func InsertUser(c echo.Context) error {
+	db := c.Get("db").(*sql.DB)
+	defer db.Close()
+
+	err := c.Request().ParseForm()
+	if err != nil {
+		log.Println("Error:", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"Message": "Something Wrong",})
+	}
+
+	name := c.FormValue("name")
+	age, _ := strconv.Atoi(c.FormValue("age"))
+	address := c.FormValue("address")
+	country := c.FormValue("country")
+
+	_, errQuery := db.Exec("INSERT INTO users (name, age, address, country) VALUES (?, ?, ?, ?)", name, age, address, country)
+	
+	var response Response
+	if errQuery != nil {
+		response.Status = 400
+		response.Message = "Error"
+		return c.JSON(http.StatusBadRequest, response)
+	} else {
+		response.Status = 200
+		response.Message = "Success"
+		return c.JSON(http.StatusOK, response)
 	}
 }

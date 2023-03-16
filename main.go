@@ -8,7 +8,7 @@ import (
 
 func main() {
 	e := echo.New()
-	
+
 	// Menyimpan koneksi database ke dalam context Echo
 	e.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -18,7 +18,7 @@ func main() {
 	})
 
 	e.GET("/users", controllers.GetAllUsers)
-	e.
+	e.POST("/users", controllers.InsertUser)
 
 	e.Logger.Fatal(e.Start(":6969"))
 }
