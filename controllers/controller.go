@@ -79,16 +79,103 @@ func InsertUser(c echo.Context) error {
 	address := c.FormValue("address")
 	country := c.FormValue("country")
 
-	_, errQuery := db.Exec("INSERT INTO users (name, age, address, country) VALUES (?, ?, ?, ?)", name, age, address, country)
+	ins, errQuery := db.Exec("INSERT INTO users (name, age, address, country) VALUES (?, ?, ?, ?)", name, age, address, country)
+	id, errQuery := ins.LastInsertId()
+	
+	user := User{
+		ID: int(id),
+		Name: name,
+		Age: age,
+		Address: address,
+		Country: country,
+	}
 	
 	var response Response
 	if errQuery != nil {
+		response.Message = "Error"
+		return c.JSONP(http.StatusBadRequest, response.Message, user)
+	} else {
+		response.Message = "Success"
+		return c.JSONP(http.StatusOK, response.Message, user)
+	}
+}
+
+func UpdateUser(c echo.Context) error {
+	db := c.Get("db").(*sql.DB)
+	defer db.Close()
+
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	err := c.Request().ParseForm()
+	if err != nil {
+		log.Println("Error:", err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"Message": "Something Wrong",})
+	}
+
+	name := c.FormValue("name")
+	age, _ := strconv.Atoi(c.FormValue("age"))
+	address := c.FormValue("address")
+	country := c.FormValue("country")
+
+	ins, errQuery := db.Exec("UPDATE users SET name=?, age=?, address=?, country=? WHERE id=?", name, age, address, country, id)
+	_, errQuery = ins.LastInsertId()
+	
+	user := User{
+		ID: id,
+		Name: name,
+		Age: age,
+		Address: address,
+		Country: country,
+	}
+	
+	var response Response
+	if errQuery != nil {
+		response.Message = "Error"
+		return c.JSONP(http.StatusBadRequest, response.Message, user)
+	} else {
+		response.Message = "Success"
+		return c.JSONP(http.StatusOK, response.Message, user)
+	}
+}
+
+func DeleteUser(c echo.Context) error {
+	db := c.Get("db").(*sql.DB)
+	defer db.Close()
+
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	res, errQuery := db.Exec("DELETE FROM users WHERE id=?", id)
+	
+	rowsAffected, _ := res.RowsAffected()
+	if rowsAffected == 0 {
+		response := ResponseDelete{
+			Status : 400,
+			Message: "User not found",
+			Id     : id,
+		}
+		return c.JSON(http.StatusNotFound, response)
+	}
+
+	_, errAutoIncrement := db.Exec(fmt.Sprintf("ALTER TABLE users AUTO_INCREMENT = %d", id))
+	if errAutoIncrement != nil {
+		response := ResponseDelete{
+			Status : 400,
+			Message: "Error",
+			Id     : id,
+		}
+		return c.JSON(http.StatusBadRequest, response)
+	}
+
+	var response ResponseDelete
+	if errQuery != nil {
 		response.Status = 400
 		response.Message = "Error"
+		response.Id = id
 		return c.JSON(http.StatusBadRequest, response)
 	} else {
 		response.Status = 200
-		response.Message = "Success"
+		response.Message = "Success Delete User"
+		response.Id = id
 		return c.JSON(http.StatusOK, response)
 	}
 }
