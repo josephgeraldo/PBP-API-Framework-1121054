@@ -143,10 +143,10 @@ func UpdateUser(c echo.Context) error {
 	country := c.FormValue("country")
 
 	//Mengeksekusi query untuk mengubah data user
-	ins, errQuery := db.Exec("UPDATE users SET name=?, age=?, address=?, country=? WHERE id=?", name, age, address, country, id)
+	upd, errQuery := db.Exec("UPDATE users SET name=?, age=?, address=?, country=? WHERE id=?", name, age, address, country, id)
 	
 	//Mengecek apakah terdapat id user yang diubah
-	rowsAffected, _ := ins.RowsAffected()
+	rowsAffected, _ := upd.RowsAffected()
 	if rowsAffected == 0 {
 		response := ResponseDelete{
 			Status : 400,
@@ -157,7 +157,7 @@ func UpdateUser(c echo.Context) error {
 	}
 
 	//Mengambil id dari data user yang baru ditambahkan
-	_, errQuery = ins.LastInsertId()
+	_, errQuery = upd.LastInsertId()
 	
 	//Membuat struct User untuk menampung data user yang baru ditambahkan
 	user := User{
