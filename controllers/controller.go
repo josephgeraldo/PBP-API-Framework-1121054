@@ -97,6 +97,7 @@ func InsertUser(c echo.Context) error {
 
 	//Mengeksekusi query untuk menambahkan data user
 	ins, errQuery := db.Exec("INSERT INTO users (name, age, address, country) VALUES (?, ?, ?, ?)", name, age, address, country)
+	
 	//Mengambil id dari data user yang baru ditambahkan
 	id, errQuery := ins.LastInsertId()
 	
