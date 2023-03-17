@@ -121,6 +121,7 @@ func InsertUser(c echo.Context) error {
 }
 
 func UpdateUser(c echo.Context) error {
+	//Mengambil koneksi database dari konteks Echo menggunakan c.Get dan diubah menjadi tipe data *sql.DB
 	db := c.Get("db").(*sql.DB)
 	defer db.Close()
 
@@ -178,6 +179,7 @@ func UpdateUser(c echo.Context) error {
 }
 
 func DeleteUser(c echo.Context) error {
+	//Mengambil koneksi database dari konteks Echo menggunakan c.Get dan diubah menjadi tipe data *sql.DB
 	db := c.Get("db").(*sql.DB)
 	defer db.Close()
 
