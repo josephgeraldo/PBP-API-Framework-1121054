@@ -142,6 +142,18 @@ func UpdateUser(c echo.Context) error {
 
 	//Mengeksekusi query untuk mengubah data user
 	ins, errQuery := db.Exec("UPDATE users SET name=?, age=?, address=?, country=? WHERE id=?", name, age, address, country, id)
+	
+	//Mengecek apakah terdapat id user yang diubah
+	rowsAffected, _ := ins.RowsAffected()
+	if rowsAffected == 0 {
+		response := ResponseDelete{
+			Status : 400,
+			Message: "User not found",
+			Id     : id,
+		}
+		return c.JSON(http.StatusNotFound, response)
+	}
+
 	//Mengambil id dari data user yang baru ditambahkan
 	_, errQuery = ins.LastInsertId()
 	
