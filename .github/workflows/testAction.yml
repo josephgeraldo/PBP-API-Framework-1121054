@@ -9,19 +9,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      #melakukan checkout kode pada branch master yang baru saja di-push
       - name: Checkout
         uses: actions/checkout@v3
 
+      #melakukan setup Go pada versi 1.19.5 pada environment yang akan digunakan untuk menjalankan Linter
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
           go-version: '1.19.5'
 
+      #melakukan testing
       - name: Testing Go
         uses: n8maninger/action-golang-test@v1
-
-      - name: Upload Linter Results
-        uses: actions/upload-artifact@v3
-        with:
-          name: Results
-          path: results.txt

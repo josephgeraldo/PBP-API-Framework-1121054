@@ -28,3 +28,10 @@ jobs:
       #menjalankan Linter Go pada seluruh file kode yang ada pada proyek Go menggunakan command golint ./...
       - name: Run Linter
         run: golint ./...
+
+      #menyimpan hasil Linter ke dalam file results.txt
+      - name: Upload Linter Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Results
+          path: results.txt
