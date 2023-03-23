@@ -6,16 +6,28 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  full_ci:
+    strategy:
+      matrix:
+        go_version: [ 1.19.5 ]
+
+    runs-on: ubuntu-20.04
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: checkout
+        uses: actions/checkout@v2
 
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.19.5'
+          go-version: ${{ matrix.go_version }}
+        
+      - name: run tests
+        run: go test -json ./... > test.json
 
-      - name: Testing Go
-        uses: n8maninger/action-golang-test@v1
+      - name: Annotate tests
+        if: always()
+        uses: guyarb/golang-test-annotations@v0.5.1
+        with:
+          test-results: test.json
+          package-name: foobar # optional, if using custom package name, github.com/owner/repo stripped from the pathname by default
