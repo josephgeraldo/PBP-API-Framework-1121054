@@ -29,9 +29,4 @@ jobs:
       - name: Run Linter
         run: golint ./...
 
-      #mengupload hasil linting pada proyek Go ke dalam file results.txt menggunakan Github Actions
-      - name: Upload Linter Results
-        uses: actions/upload-artifact@v2
-        with:
-          name: Lint Results
-          path: results.txt
+      
