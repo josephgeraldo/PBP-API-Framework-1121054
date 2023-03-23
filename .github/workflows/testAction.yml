@@ -19,3 +19,9 @@ jobs:
 
       - name: Testing Go
         uses: n8maninger/action-golang-test@v1
+      
+      - name: Upload Linter Results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Results
+          path: .next/
