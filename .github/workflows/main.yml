@@ -31,5 +31,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Lint Results
-          path: lint-results.txt
-          
+          path: results.txt
