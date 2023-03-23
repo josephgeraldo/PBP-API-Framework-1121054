@@ -151,7 +151,7 @@ func UpdateUser(c echo.Context) error {
 		response := ResponseDelete{
 			Status : 400,
 			Message: "User not found",
-			Id     : id,
+			ID     : id,
 		}
 		return c.JSON(http.StatusNotFound, response)
 	}
@@ -196,7 +196,7 @@ func DeleteUser(c echo.Context) error {
 		response := ResponseDelete{
 			Status : 400,
 			Message: "User not found",
-			Id     : id,
+			ID     : id,
 		}
 		return c.JSON(http.StatusNotFound, response)
 	}
@@ -207,7 +207,7 @@ func DeleteUser(c echo.Context) error {
 		response := ResponseDelete{
 			Status : 400,
 			Message: "Error",
-			Id     : id,
+			ID     : id,
 		}
 		return c.JSON(http.StatusBadRequest, response)
 	}
@@ -217,12 +217,12 @@ func DeleteUser(c echo.Context) error {
 	if errQuery != nil {
 		response.Status = 400
 		response.Message = "Error"
-		response.Id = id
+		response.ID = id
 		return c.JSON(http.StatusBadRequest, response)
 	} else {
 		response.Status = 200
 		response.Message = "Success Delete User"
-		response.Id = id
+		response.ID = id
 		return c.JSON(http.StatusOK, response)
 	}
 }
