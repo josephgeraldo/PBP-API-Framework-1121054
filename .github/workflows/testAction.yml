@@ -22,7 +22,7 @@ jobs:
           go-version: ${{ matrix.go_version }}
         
       - name: run tests
-        run: go test -json ./... > test.json
+        run: go test -go ./... > main.go
 
       - name: Annotate tests
         if: always()
